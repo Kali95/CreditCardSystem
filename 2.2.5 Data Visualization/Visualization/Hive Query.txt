@@ -1,0 +1,23 @@
+//*1 Find the top 20 zip codes(hint: branch_zip) 
+by total transaction value for each transaction type?*//
+
+
+SELECT branch_zip as Branch_Zip, sum(transaction_value) as Total
+FROM CDW_SAPP_F_CREDIT_CARD
+JOIN CDW_SAPP_D_BRANCH
+ON (CDW_SAPP_F_CREDIT_CARD.branch_code=CDW_SAPP_D_BRANCH.branch_code)
+GROUP BY Branch_Zip
+ORDER BY Total DESC Limit 20;
+
+
+
+
+
+//*2. Find total transaction value for each transaction type by Quarter in 2018?*//
+
+
+SELECT transaction_type AS Type, quarter AS Quarter, sum(transaction_value) As Total
+FROM CDW_SAPP_F_CREDIT_CARD
+JOIN CDW_SAPP_D_TIME
+ON (CDW_SAPP_F_CREDIT_CARD.timeid=CDW_SAPP_D_TIME.timeid)
+GROUP BY transaction_type, quarter;

@@ -1,0 +1,45 @@
+Drop Table CDW_SAPP_DD_BRANCH;
+Drop Table CDW_SAPP_D_BRANCH;
+
+create external table CDW_SAPP_DD_BRANCH
+(Branch_Code string,
+ Branch_Name string,
+ Branch_Street string,
+ Branch_City string,
+ Branch_State string,
+ Branch_Zip string,
+ Branch_Phone string,
+ Last_Updated string )
+ ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' ESCAPED BY '"' LINES TERMINATED BY '\n' 
+STORED AS textfile
+LOCATION "/user/maria_dev/Credit_Card_System/CDW_SAPP_D_BRANCH";
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+create external table CDW_SAPP_D_BRANCH
+(Branch_Code string,
+ Branch_Name string,
+ Branch_Street string,
+ Branch_City string,
+ Branch_Zip String,
+ Branch_Phone string,
+ Last_Updated string )
+PARTITIONED BY (Branch_State string) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' ESCAPED BY '"' LINES TERMINATED BY '\n' 
+LOCATION "/user/maria_dev/Credit_Card_System/CDW_SAPP_DD_BRANCH";
+
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+INSERT INTO table CDW_SAPP_D_BRANCH
+ PARTITION (Branch_State)
+ Select Branch_Code String,
+ Branch_Name string,
+ Branch_Street string,
+ Branch_City string,
+ Branch_Zip string,
+ Branch_Phone string,
+ Last_Updated string,
+ Branch_State string
+from CDW_SAPP_DD_BRANCH;

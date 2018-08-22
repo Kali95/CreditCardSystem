@@ -1,0 +1,43 @@
+drop table CDW_SAPP_FF_CREDIT_CARD;
+drop table CDW_SAPP_F_CREDIT_CARD;
+
+create external table CDW_SAPP_FF_CREDIT_CARD
+(Cust_CC_NO string,
+ TIMEID string,
+ Cust_SSN string,
+ Branch_Code string,
+ Transaction_Type string,
+ Transaction_Value string,
+ Transaction_ID string)
+ ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' ESCAPED BY '"' LINES TERMINATED BY '\n' 
+STORED AS textfile
+LOCATION "/user/maria_dev/Credit_Card_System/CDW_SAPP_F_CREDIT_CARD";
+
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+create external table CDW_SAPP_F_CREDIT_CARD
+(Cust_CC_NO string,
+ TIMEID string,
+ Cust_SSN string,
+ Transaction_Type string,
+ Transaction_Value string,
+ Transaction_ID string)
+ PARTITIONED BY (Branch_Code string) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' ESCAPED BY '"' LINES TERMINATED BY '\n' 
+LOCATION "/user/maria_dev/Credit_Card_System/CDW_SAPP_FF_CREDIT_CARD";
+
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+INSERT INTO table CDW_SAPP_F_Credit_Card
+ PARTITION (Branch_Code)
+ Select Cust_CC_NO string,
+ TIMEID string,
+ Cust_SSN string,
+ Transaction_Type string,
+ Transaction_Value string,
+ Transaction_ID string,
+ Branch_Code string
+from CDW_SAPP_FF_Credit_Card;

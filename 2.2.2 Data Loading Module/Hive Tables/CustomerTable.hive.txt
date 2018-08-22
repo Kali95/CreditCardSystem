@@ -1,0 +1,60 @@
+
+drop table CDW_SAPP_D_CUSTOMER;
+drop table CDW_SAPP_DD_CUSTOMER;
+
+create external table CDW_SAPP_DD_CUSTOMER
+(Cust_SSN string,
+ Cust_F_Name string,
+ Cust_M_Name string,
+ Cust_L_Name string,
+ Cust_CC_NO string,
+ Cust_Street string,
+ Cust_City string,
+ Cust_State string,
+ Cust_Zip string,
+ Cust_Phone string,
+ Cust_Email string,
+ Last_Updated string )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' ESCAPED BY '"' LINES TERMINATED BY '\n' 
+STORED AS textfile
+LOCATION "/user/maria_dev/Credit_Card_System/CDW_SAPP_D_CUSTOMER";
+
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+create external table CDW_SAPP_D_CUSTOMER
+(Cust_SSN string,
+ Cust_F_Name string,
+ Cust_M_Name string,
+ Cust_L_Name string,
+ Cust_CC_NO string,
+ Cust_Street string,
+ Cust_City string,
+ Cust_Zip string,
+ Cust_Phone string,
+ Cust_Email string,
+ Last_Updated string )
+ PARTITIONED BY (Cust_State string) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' ESCAPED BY '"' LINES TERMINATED BY '\n' 
+LOCATION "/user/maria_dev/Credit_Card_System/CDW_SAPP_DD_CUSTOMER";
+
+
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+INSERT INTO table CDW_SAPP_D_CUSTOMER 
+PARTITION (Cust_State) 
+SELECT Cust_SSN string, 
+ Cust_F_Name string, Cust_M_Name string,
+ Cust_L_Name string,
+ Cust_CC_NO string,
+ Cust_Street string,
+ Cust_City string,
+ Cust_Zip string,
+ Cust_Phone string,
+ Cust_Email string,
+ Last_Updated string,
+ Cust_State string
+
+from CDW_SAPP_DD_CUSTOMER;
